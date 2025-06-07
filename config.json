@@ -1,0 +1,164 @@
+{
+  "winxy_config": {
+    "version": "1.0",
+    "name": "Windows紧急响应系统 - WinXY",
+    "description": "专为Windows设计的紧急响应和安全分析系统",
+    "author": "WinXY Emergency Response Team",
+    "created": "2025-06-07"
+  },
+  "analysis_settings": {
+    "threat_scoring": {
+      "suspicious_process_weight": 20,
+      "suspicious_connection_weight": 25,
+      "hidden_user_weight": 30,
+      "failed_login_weight": 1,
+      "external_connection_threshold": 10,
+      "external_connection_weight": 15,
+      "admin_user_threshold": 3,
+      "admin_user_weight": 10
+    },
+    "threat_levels": {
+      "low": {
+        "min_score": 0,
+        "max_score": 19,
+        "color": "green",
+        "description": "系统状态正常，未发现明显威胁"
+      },
+      "medium": {
+        "min_score": 20,
+        "max_score": 49,
+        "color": "yellow", 
+        "description": "发现一些可疑活动，建议进一步检查"
+      },
+      "high": {
+        "min_score": 50,
+        "max_score": 79,
+        "color": "orange",
+        "description": "发现多个安全问题，需要立即处理"
+      },
+      "critical": {
+        "min_score": 80,
+        "max_score": 100,
+        "color": "red",
+        "description": "系统存在严重安全威胁，需要紧急响应"
+      }
+    },
+    "file_analysis": {
+      "supported_formats": [".txt", ".log", ".csv", ".json"],
+      "max_file_size_mb": 100,
+      "encoding_detection": true,
+      "auto_encoding_fallback": ["utf-8", "gbk", "gb2312", "latin1"]
+    }
+  },
+  "detection_rules": {
+    "suspicious_processes": {
+      "enabled": true,
+      "process_names": [
+        "cmd.exe",
+        "powershell.exe",
+        "nc.exe", 
+        "netcat.exe",
+        "psexec.exe",
+        "mimikatz.exe",
+        "procdump.exe",
+        "wce.exe",
+        "fgdump.exe",
+        "pwdump.exe",
+        "gsecdump.exe"
+      ],
+      "description": "检测可能的恶意或管理工具进程"
+    },
+    "suspicious_ports": {
+      "enabled": true,
+      "ports": [4444, 6666, 1337, 31337, 8080, 9999, 12345, 54321],
+      "description": "检测常见的恶意软件通信端口"
+    },
+    "external_connections": {
+      "enabled": true,
+      "exclude_ips": ["127.0.0.1", "::1", "0.0.0.0"],
+      "threshold": 10,
+      "description": "监控外部网络连接数量"
+    },
+    "failed_logins": {
+      "enabled": true,
+      "event_id": 4625,
+      "threshold": 10,
+      "description": "检测失败登录尝试"
+    },
+    "hidden_users": {
+      "enabled": true,
+      "registry_path": "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\\SpecialAccounts\\UserList",
+      "description": "检测隐藏的用户账户"
+    }
+  },
+  "output_settings": {
+    "reports_directory": "reports",
+    "logs_directory": "logs", 
+    "uploads_directory": "uploads",
+    "temp_directory": "temp",
+    "report_formats": ["txt", "json", "csv"],
+    "timestamp_format": "%Y-%m-%d_%H-%M-%S",
+    "encoding": "utf-8"
+  },
+  "web_interface": {
+    "host": "0.0.0.0",
+    "port": 12000,
+    "debug": false,
+    "cors_enabled": true,
+    "max_upload_size_mb": 50,
+    "allowed_extensions": [".txt", ".log", ".csv", ".json"]
+  },
+  "security_settings": {
+    "require_admin_rights": true,
+    "log_all_commands": true,
+    "audit_file": "logs/audit.log",
+    "max_log_size_mb": 10,
+    "log_retention_days": 30
+  },
+  "performance_settings": {
+    "max_processes_to_analyze": 1000,
+    "max_connections_to_analyze": 500,
+    "chunk_size_for_large_files": 1024,
+    "timeout_seconds": 30
+  },
+  "notification_settings": {
+    "enable_alerts": true,
+    "alert_threshold": "high",
+    "email_notifications": false,
+    "log_notifications": true
+  },
+  "backup_settings": {
+    "auto_backup_reports": true,
+    "backup_directory": "backups",
+    "max_backup_files": 50,
+    "backup_interval_hours": 24
+  },
+  "update_settings": {
+    "check_for_updates": true,
+    "update_url": "https://github.com/d54Gdje/winxy",
+    "auto_update": false
+  },
+  "advanced_analysis": {
+    "enable_deep_scan": true,
+    "analyze_memory_usage": true,
+    "check_file_signatures": false,
+    "network_traffic_analysis": true,
+    "behavioral_analysis": false
+  },
+  "integration_settings": {
+    "api_enabled": false,
+    "api_port": 12001,
+    "webhook_url": "",
+    "external_tools": {
+      "virustotal_api_key": "",
+      "shodan_api_key": "",
+      "abuse_ipdb_api_key": ""
+    }
+  },
+  "language_settings": {
+    "default_language": "zh-CN",
+    "supported_languages": ["zh-CN", "en-US"],
+    "date_format": "YYYY-MM-DD",
+    "time_format": "HH:mm:ss"
+  }
+}

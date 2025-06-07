@@ -1,0 +1,498 @@
+{
+  "emergency_commands": {
+    "system_info": {
+      "category": "系统信息收集",
+      "description": "收集Windows系统基本信息的命令",
+      "commands": [
+        {
+          "name": "systeminfo",
+          "description": "显示详细的系统配置信息",
+          "usage": "systeminfo",
+          "example": "systeminfo | findstr /C:\"OS Name\" /C:\"Total Physical Memory\"",
+          "output": "操作系统名称、版本、硬件信息、补丁信息等",
+          "use_case": "快速了解系统基本配置和补丁状态",
+          "error_handling": "如果命令失败，检查是否有足够权限"
+        },
+        {
+          "name": "hostname",
+          "description": "显示计算机名称",
+          "usage": "hostname",
+          "example": "hostname",
+          "output": "当前计算机的主机名",
+          "use_case": "确认当前操作的主机身份",
+          "error_handling": "此命令很少失败，如果失败检查系统完整性"
+        },
+        {
+          "name": "ver",
+          "description": "显示Windows版本信息",
+          "usage": "ver",
+          "example": "ver",
+          "output": "Microsoft Windows版本号",
+          "use_case": "快速查看Windows版本",
+          "error_handling": "内置命令，不应失败"
+        },
+        {
+          "name": "whoami",
+          "description": "显示当前用户信息和权限",
+          "usage": "whoami [/all | /priv | /groups]",
+          "example": "whoami /all",
+          "output": "用户名、组成员身份、权限列表",
+          "use_case": "检查当前用户权限和组成员身份",
+          "error_handling": "需要适当权限，某些选项可能需要管理员权限"
+        },
+        {
+          "name": "ipconfig",
+          "description": "显示网络配置信息",
+          "usage": "ipconfig [/all | /release | /renew | /flushdns]",
+          "example": "ipconfig /all",
+          "output": "IP地址、子网掩码、默认网关、DNS服务器等",
+          "use_case": "诊断网络连接问题，查看网络配置",
+          "error_handling": "如果显示异常，检查网络适配器状态"
+        }
+      ]
+    },
+    "process_management": {
+      "category": "进程管理",
+      "description": "管理和监控系统进程的命令",
+      "commands": [
+        {
+          "name": "tasklist",
+          "description": "显示当前运行的进程列表",
+          "usage": "tasklist [/v | /svc | /fi \"filter\"]",
+          "example": "tasklist /v | findstr \"notepad\"",
+          "output": "进程名、PID、会话名、会话号、内存使用量",
+          "use_case": "查看系统进程状态，查找特定进程",
+          "error_handling": "如果无法获取进程信息，检查权限或系统状态"
+        },
+        {
+          "name": "taskkill",
+          "description": "终止指定的进程",
+          "usage": "taskkill /PID pid | /IM imagename [/F]",
+          "example": "taskkill /PID 1234 /F",
+          "output": "成功或失败的终止消息",
+          "use_case": "强制终止恶意或无响应的进程",
+          "error_handling": "使用/F强制终止，注意可能导致数据丢失",
+          "warning": "谨慎使用，可能影响系统稳定性"
+        },
+        {
+          "name": "wmic process",
+          "description": "使用WMI查询进程详细信息",
+          "usage": "wmic process get Name,ProcessId,CommandLine",
+          "example": "wmic process where \"name='notepad.exe'\" get ProcessId,CommandLine",
+          "output": "进程的详细信息包括命令行参数",
+          "use_case": "获取进程的完整启动命令和路径",
+          "error_handling": "如果WMI服务未运行，先启动WMI服务"
+        }
+      ]
+    },
+    "network_diagnostics": {
+      "category": "网络诊断",
+      "description": "网络连接和诊断相关命令",
+      "commands": [
+        {
+          "name": "netstat",
+          "description": "显示网络连接、路由表和网络接口统计",
+          "usage": "netstat [-a | -n | -o | -r]",
+          "example": "netstat -ano | findstr \"ESTABLISHED\"",
+          "output": "协议、本地地址、外部地址、状态、PID",
+          "use_case": "检查网络连接状态，识别可疑连接",
+          "error_handling": "如果显示不完整，检查网络服务状态"
+        },
+        {
+          "name": "ping",
+          "description": "测试网络连通性",
+          "usage": "ping [-t | -n count] target",
+          "example": "ping -n 4 8.8.8.8",
+          "output": "往返时间、丢包率统计",
+          "use_case": "测试网络连接，诊断网络问题",
+          "error_handling": "如果超时，检查防火墙设置和网络配置"
+        },
+        {
+          "name": "tracert",
+          "description": "跟踪数据包到目标的路径",
+          "usage": "tracert target",
+          "example": "tracert google.com",
+          "output": "每一跳的路由器和延迟时间",
+          "use_case": "诊断网络路由问题，定位网络故障点",
+          "error_handling": "如果某些跳显示超时，可能是路由器配置问题"
+        },
+        {
+          "name": "nslookup",
+          "description": "查询DNS记录",
+          "usage": "nslookup [domain | IP]",
+          "example": "nslookup google.com",
+          "output": "域名对应的IP地址或IP对应的域名",
+          "use_case": "验证DNS解析，检查域名配置",
+          "error_handling": "如果查询失败，检查DNS服务器设置"
+        },
+        {
+          "name": "arp",
+          "description": "显示和修改ARP缓存表",
+          "usage": "arp [-a | -d | -s]",
+          "example": "arp -a",
+          "output": "IP地址和对应的MAC地址",
+          "use_case": "检查局域网内的设备，诊断ARP问题",
+          "error_handling": "如果ARP表异常，可能存在ARP欺骗攻击"
+        }
+      ]
+    },
+    "file_operations": {
+      "category": "文件操作",
+      "description": "文件和目录操作相关命令",
+      "commands": [
+        {
+          "name": "dir",
+          "description": "列出目录内容",
+          "usage": "dir [path] [/a] [/s] [/o]",
+          "example": "dir C:\\Windows\\System32\\*.exe /s",
+          "output": "文件和目录列表，包含大小、日期等信息",
+          "use_case": "查找文件，检查目录内容",
+          "error_handling": "如果访问被拒绝，检查文件权限"
+        },
+        {
+          "name": "copy",
+          "description": "复制文件",
+          "usage": "copy source destination",
+          "example": "copy C:\\source\\file.txt D:\\backup\\",
+          "output": "复制操作的结果信息",
+          "use_case": "备份重要文件，复制配置文件",
+          "error_handling": "确保目标路径存在，检查磁盘空间"
+        },
+        {
+          "name": "del",
+          "description": "删除文件",
+          "usage": "del [/f] [/q] filename",
+          "example": "del /f /q C:\\temp\\*.tmp",
+          "output": "删除操作的确认信息",
+          "use_case": "清理临时文件，删除恶意文件",
+          "error_handling": "使用/f强制删除只读文件",
+          "warning": "删除操作不可恢复，请谨慎使用"
+        },
+        {
+          "name": "mkdir",
+          "description": "创建目录",
+          "usage": "mkdir directory_name",
+          "example": "mkdir C:\\backup\\logs",
+          "output": "目录创建成功或失败的消息",
+          "use_case": "创建备份目录，组织文件结构",
+          "error_handling": "如果目录已存在会报错，可以忽略"
+        },
+        {
+          "name": "attrib",
+          "description": "显示或修改文件属性",
+          "usage": "attrib [+|-][r|h|s|a] filename",
+          "example": "attrib +h +s important.txt",
+          "output": "文件属性信息",
+          "use_case": "隐藏重要文件，修改文件属性",
+          "error_handling": "需要适当权限修改某些系统文件属性"
+        },
+        {
+          "name": "findstr",
+          "description": "在文件中搜索文本",
+          "usage": "findstr [/i] [/r] \"pattern\" filename",
+          "example": "findstr /i \"error\" C:\\logs\\*.log",
+          "output": "包含搜索模式的行",
+          "use_case": "在日志文件中搜索错误信息",
+          "error_handling": "使用/i忽略大小写，/r使用正则表达式"
+        }
+      ]
+    },
+    "security_management": {
+      "category": "安全管理",
+      "description": "用户账户和权限管理命令",
+      "commands": [
+        {
+          "name": "net user",
+          "description": "管理用户账户",
+          "usage": "net user [username] [password] [/add | /delete]",
+          "example": "net user administrator",
+          "output": "用户账户信息或操作结果",
+          "use_case": "查看用户信息，管理用户账户",
+          "error_handling": "需要管理员权限进行用户管理操作",
+          "warning": "修改用户账户可能影响系统安全"
+        },
+        {
+          "name": "net localgroup",
+          "description": "管理本地用户组",
+          "usage": "net localgroup [groupname] [username] [/add | /delete]",
+          "example": "net localgroup Administrators",
+          "output": "组成员列表或操作结果",
+          "use_case": "查看管理员组成员，管理用户组",
+          "error_handling": "需要管理员权限进行组管理操作"
+        },
+        {
+          "name": "icacls",
+          "description": "显示或修改文件和目录的访问控制列表",
+          "usage": "icacls filename [/grant | /deny | /remove]",
+          "example": "icacls C:\\Windows\\System32",
+          "output": "详细的权限设置信息",
+          "use_case": "检查文件权限，修改访问控制",
+          "error_handling": "需要管理员权限修改系统文件权限"
+        },
+        {
+          "name": "takeown",
+          "description": "获取文件或目录的所有权",
+          "usage": "takeown /f filename [/r]",
+          "example": "takeown /f C:\\protected_file.txt",
+          "output": "所有权更改的结果",
+          "use_case": "获取被保护文件的控制权",
+          "error_handling": "需要管理员权限，谨慎使用",
+          "warning": "更改系统文件所有权可能影响系统稳定性"
+        },
+        {
+          "name": "gpresult",
+          "description": "显示组策略信息",
+          "usage": "gpresult [/r | /z]",
+          "example": "gpresult /r",
+          "output": "当前应用的组策略设置",
+          "use_case": "检查组策略配置，诊断策略问题",
+          "error_handling": "如果无法获取信息，检查域连接状态"
+        }
+      ]
+    },
+    "service_management": {
+      "category": "服务管理",
+      "description": "Windows服务管理命令",
+      "commands": [
+        {
+          "name": "sc query",
+          "description": "查询服务状态",
+          "usage": "sc query [servicename] [type= service] [state= all]",
+          "example": "sc query type= service state= all",
+          "output": "服务名称、状态、类型等信息",
+          "use_case": "检查服务运行状态，诊断服务问题",
+          "error_handling": "如果服务不存在会返回错误信息"
+        },
+        {
+          "name": "net start/stop",
+          "description": "启动或停止服务",
+          "usage": "net start/stop servicename",
+          "example": "net start \"Windows Defender Antivirus Service\"",
+          "output": "服务启动或停止的结果",
+          "use_case": "控制服务运行状态",
+          "error_handling": "需要管理员权限，服务名称要准确",
+          "warning": "停止关键服务可能影响系统功能"
+        },
+        {
+          "name": "sc config",
+          "description": "配置服务启动类型",
+          "usage": "sc config servicename start= [auto | manual | disabled]",
+          "example": "sc config Spooler start= disabled",
+          "output": "配置更改的结果",
+          "use_case": "修改服务启动方式，禁用不需要的服务",
+          "error_handling": "注意等号后面要有空格",
+          "warning": "禁用系统服务可能影响功能"
+        },
+        {
+          "name": "wmic service",
+          "description": "使用WMI查询服务信息",
+          "usage": "wmic service get Name,State,StartMode",
+          "example": "wmic service where \"state='running'\" get Name,ProcessId",
+          "output": "服务的详细信息",
+          "use_case": "获取服务的详细配置和状态",
+          "error_handling": "确保WMI服务正常运行"
+        },
+        {
+          "name": "tasklist /svc",
+          "description": "显示服务和对应的进程",
+          "usage": "tasklist /svc",
+          "example": "tasklist /svc | findstr svchost",
+          "output": "进程和托管的服务列表",
+          "use_case": "查看服务对应的进程，诊断服务问题",
+          "error_handling": "某些服务可能没有对应的进程"
+        }
+      ]
+    },
+    "registry_operations": {
+      "category": "注册表操作",
+      "description": "Windows注册表查询和修改命令",
+      "commands": [
+        {
+          "name": "reg query",
+          "description": "查询注册表键值",
+          "usage": "reg query keyname [/v valuename] [/s]",
+          "example": "reg query \"HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\"",
+          "output": "注册表键和值的内容",
+          "use_case": "检查启动项，查看系统配置",
+          "error_handling": "如果键不存在会返回错误"
+        },
+        {
+          "name": "reg add",
+          "description": "添加注册表项",
+          "usage": "reg add keyname /v valuename /t type /d data",
+          "example": "reg add \"HKCU\\Software\\Test\" /v TestValue /t REG_SZ /d \"TestData\"",
+          "output": "添加操作的结果",
+          "use_case": "创建配置项，修改系统设置",
+          "error_handling": "需要适当权限，注意数据类型",
+          "warning": "修改注册表可能影响系统稳定性"
+        },
+        {
+          "name": "reg delete",
+          "description": "删除注册表项",
+          "usage": "reg delete keyname [/v valuename] [/f]",
+          "example": "reg delete \"HKCU\\Software\\Test\" /f",
+          "output": "删除操作的结果",
+          "use_case": "清理恶意注册表项，移除配置",
+          "error_handling": "使用/f强制删除，避免确认提示",
+          "warning": "删除系统注册表项可能导致系统问题"
+        }
+      ]
+    },
+    "event_logs": {
+      "category": "事件日志",
+      "description": "Windows事件日志查询和分析命令",
+      "commands": [
+        {
+          "name": "wevtutil qe",
+          "description": "查询事件日志",
+          "usage": "wevtutil qe logname [/c:count] [/rd:true] [/f:text]",
+          "example": "wevtutil qe Security /c:10 /rd:true /f:text",
+          "output": "事件日志条目的详细信息",
+          "use_case": "查看安全事件，分析系统日志",
+          "error_handling": "如果日志不存在或无权限会报错"
+        },
+        {
+          "name": "eventvwr",
+          "description": "打开事件查看器",
+          "usage": "eventvwr",
+          "example": "eventvwr",
+          "output": "图形化的事件查看器界面",
+          "use_case": "图形化查看和分析事件日志",
+          "error_handling": "如果无法打开，检查系统服务状态"
+        },
+        {
+          "name": "wevtutil el",
+          "description": "列出所有事件日志",
+          "usage": "wevtutil el",
+          "example": "wevtutil el | findstr Security",
+          "output": "系统中所有可用的事件日志名称",
+          "use_case": "查找特定的事件日志",
+          "error_handling": "通常不会失败"
+        }
+      ]
+    },
+    "performance_monitoring": {
+      "category": "性能监控",
+      "description": "系统性能监控和分析命令",
+      "commands": [
+        {
+          "name": "perfmon",
+          "description": "打开性能监视器",
+          "usage": "perfmon",
+          "example": "perfmon",
+          "output": "图形化的性能监控界面",
+          "use_case": "监控系统性能，分析资源使用",
+          "error_handling": "如果无法打开，检查性能计数器服务"
+        },
+        {
+          "name": "resmon",
+          "description": "打开资源监视器",
+          "usage": "resmon",
+          "example": "resmon",
+          "output": "详细的系统资源使用情况",
+          "use_case": "实时监控CPU、内存、磁盘、网络使用",
+          "error_handling": "需要管理员权限获取完整信息"
+        },
+        {
+          "name": "wmic cpu",
+          "description": "获取CPU信息",
+          "usage": "wmic cpu get Name,NumberOfCores,LoadPercentage",
+          "example": "wmic cpu get Name,NumberOfCores,CurrentClockSpeed",
+          "output": "CPU的详细信息和状态",
+          "use_case": "检查CPU配置和使用率",
+          "error_handling": "确保WMI服务正常运行"
+        },
+        {
+          "name": "wmic memorychip",
+          "description": "获取内存信息",
+          "usage": "wmic memorychip get Capacity,Speed,Manufacturer",
+          "example": "wmic memorychip get Capacity,Speed,PartNumber",
+          "output": "内存条的详细信息",
+          "use_case": "检查内存配置和规格",
+          "error_handling": "某些虚拟机可能无法获取完整信息"
+        },
+        {
+          "name": "typeperf",
+          "description": "显示性能计数器数据",
+          "usage": "typeperf \"\\counter\" [-sc samples]",
+          "example": "typeperf \"\\Processor(_Total)\\% Processor Time\" -sc 10",
+          "output": "实时的性能计数器数据",
+          "use_case": "监控特定的性能指标",
+          "error_handling": "确保计数器名称正确"
+        }
+      ]
+    }
+  },
+  "emergency_procedures": {
+    "malware_response": {
+      "name": "恶意软件响应流程",
+      "steps": [
+        "1. 隔离受感染系统 - 断开网络连接",
+        "2. 识别恶意进程 - 使用 tasklist /v 查看可疑进程",
+        "3. 终止恶意进程 - 使用 taskkill /PID [PID] /F",
+        "4. 检查网络连接 - 使用 netstat -ano 查看异常连接",
+        "5. 扫描系统文件 - 运行 sfc /scannow",
+        "6. 检查启动项 - 查看注册表 Run 键",
+        "7. 更新防病毒软件并全盘扫描",
+        "8. 恢复系统或重装操作系统"
+      ]
+    },
+    "network_intrusion": {
+      "name": "网络入侵响应流程",
+      "steps": [
+        "1. 确认入侵 - 检查异常网络连接和进程",
+        "2. 保护现场 - 保存日志和内存转储",
+        "3. 隔离系统 - 断开网络连接",
+        "4. 分析日志 - 查看安全事件日志",
+        "5. 识别攻击向量 - 分析入侵路径",
+        "6. 清除威胁 - 删除恶意文件和进程",
+        "7. 加固系统 - 修补漏洞，更新配置",
+        "8. 监控系统 - 持续监控异常活动"
+      ]
+    },
+    "data_breach": {
+      "name": "数据泄露响应流程",
+      "steps": [
+        "1. 确认泄露 - 验证数据泄露的范围和影响",
+        "2. 控制损失 - 立即停止数据泄露",
+        "3. 评估影响 - 确定泄露数据的敏感性",
+        "4. 通知相关方 - 按法律要求通知用户和监管机构",
+        "5. 调查原因 - 分析泄露的根本原因",
+        "6. 修复漏洞 - 修补导致泄露的安全漏洞",
+        "7. 监控账户 - 监控可能受影响的账户",
+        "8. 改进措施 - 实施预防措施避免再次发生"
+      ]
+    }
+  },
+  "common_attack_indicators": {
+    "suspicious_processes": [
+      "cmd.exe",
+      "powershell.exe", 
+      "nc.exe",
+      "netcat.exe",
+      "psexec.exe",
+      "mimikatz.exe",
+      "procdump.exe"
+    ],
+    "suspicious_ports": [
+      "4444",
+      "6666", 
+      "1337",
+      "31337",
+      "8080",
+      "9999",
+      "12345",
+      "54321"
+    ],
+    "suspicious_registry_keys": [
+      "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\\SpecialAccounts\\UserList"
+    ],
+    "suspicious_file_locations": [
+      "C:\\Windows\\Temp",
+      "C:\\Users\\%USERNAME%\\AppData\\Local\\Temp",
+      "C:\\ProgramData"
+    ]
+  }
+}
